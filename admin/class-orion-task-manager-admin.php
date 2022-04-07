@@ -74,6 +74,8 @@ class Orion_Task_Manager_Admin {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/orion-task-manager-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'acd-flexgrid', plugin_dir_url( __FILE__ ) . 'css/flexiblegs.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'o-ui', plugin_dir_url( __FILE__ ) . 'css/UI.css', array(), $this->version, 'all' );
 
 	}
 

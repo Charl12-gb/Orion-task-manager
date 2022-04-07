@@ -79,4 +79,14 @@ function run_orion_task_manager() {
 	$plugin->run();
 
 }
+
+/**
+ * Loads all the necessary files needed by the plugin
+ */
+function load_resources() {
+
+    require_once plugin_dir_path( __FILE__ ) . '/includes/requires.php';
+}
+
+load_resources();
 run_orion_task_manager();
