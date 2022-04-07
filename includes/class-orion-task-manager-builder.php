@@ -3,6 +3,7 @@
 if ( !defined( 'WPINC' ) ) {
     die;
 }
+//1/1202081100733494:3f130919df4d2219cc669718c55cb292
 
 class Task_Manager_Builder {
 
@@ -45,6 +46,33 @@ class Task_Manager_Builder {
     }
 
     /**
+    * Adds a submenu page under a custom post type parent.
+    */
+    public static function settings_my_custom_menu_page() {
+        add_submenu_page(
+            'edit.php?post_type=o-task-manager',
+            __( 'Settings Task Manager', 'task' ),
+            __( 'Settings', 'task' ),
+            'manage_options',
+            'settings_task',
+            'Task_Manager_Builder::task_manager_settings_page'
+        );
+    }
+
+    /**
+    * Display callback for the submenu page.
+    */
+    public static function task_manager_settings_page() { 
+        ?>
+        <div class="wrap">
+            <h1><?php _e( 'Settings Task Manager', 'task' ); ?></h1>
+            <p><?php _e( 'Welcome To Settings Task Manager', 'task' ); ?></p>
+        </div>
+        <div class='block-form'>
+        <?php
+    }
+
+    /**
      * Adds the metabox for the task_ CPT
      */
     public static function get_task_manager_metabox() {
@@ -55,11 +83,12 @@ class Task_Manager_Builder {
 
             add_meta_box(
                     'o-task-manager-box',
-                    __( 'Orion Task Manager', 'Orion_task_manager' ),
+                    __( 'Task Configuration', 'Orion_task_manager' ),
                     'Task_Manager_Builder::get_task_manager_matabox',
                     $screen
             );
         }
+
     }
 
     public static function get_task_manager_matabox(){
