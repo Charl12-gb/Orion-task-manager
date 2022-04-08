@@ -63,6 +63,7 @@ register_deactivation_hook( __FILE__, 'deactivate_orion_task_manager' );
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-orion-task-manager.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/function.php';
 
 /**
  * Begins execution of the plugin.

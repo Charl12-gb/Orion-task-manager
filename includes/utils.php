@@ -142,7 +142,9 @@ function o_admin_fields( $options ) {
 			?>
 	  <tr style="<?php echo esc_attr( $value['row_css'] ); ?>" class="<?php echo esc_attr( $value['row_class'] ); ?>">
 		<td class='label <?php echo $col_class; ?>'>
-			<?php echo $value['title'] . $tip; ?>
+			<?php if($value['type'] != 'button')
+				echo $value['title'] . $tip; 
+			?>
 		  <div class='o-desc'>
 			<?php echo $value['desc']; ?>
 		  </div>
@@ -626,14 +628,14 @@ function o_admin_fields( $options ) {
 			case 'button':
 				?>
 
-	  <a
+	  <button
 
 	  id="<?php echo esc_attr( $value['id'] ); ?>"
 	  style="<?php echo esc_attr( $value['css'] ); ?>"
 	  value="<?php echo esc_attr( $option_value ); ?>"
 	  class="<?php echo esc_attr( $value['class'] ); ?>"
 				<?php echo implode( ' ', $custom_attributes ); ?>
-	  ><?php echo esc_attr( $value['title'] ); ?></a>
+	  ><?php echo esc_attr( $value['title'] ); ?></button>
 
 				<?php
 				break;

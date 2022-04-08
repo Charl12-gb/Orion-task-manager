@@ -3,7 +3,7 @@
 if ( !defined( 'WPINC' ) ) {
     die;
 }
-//1/1202081100733494:3f130919df4d2219cc669718c55cb292
+//1/1202081100733494:5c4a16a64bb0c830dcb9da09716ad6c1
 
 class Task_Manager_Builder {
 
@@ -62,13 +62,53 @@ class Task_Manager_Builder {
     /**
     * Display callback for the submenu page.
     */
-    public static function task_manager_settings_page() { 
+    public static function task_manager_settings_page() {
+        $token = get_option('access_token'); 
+        if( $token != '' )
+            $submit = 'UPDATE';
+        else
+            $submit = 'SAVE';
         ?>
         <div class="wrap">
             <h1><?php _e( 'Settings Task Manager', 'task' ); ?></h1>
-            <p><?php _e( 'Welcome To Settings Task Manager', 'task' ); ?></p>
+            <p><?php _e( 'Configure your ASANA task management', 'task' ); ?></p>
         </div>
         <div class='block-form'>
+           <?php
+            $begin = array(
+                'type' => 'sectionbegin',
+                'id' => 'task-datasource-container',
+            );
+
+            $tokens = array(
+                'title' => __( 'Token Access', 'task' ),
+                'name' => 'tokens',
+                'type' => 'text',
+                'desc' => __( 'Enter the token', 'task' ),
+                'default' => $token,
+            );
+
+            $btn = array(
+                'title' => __( $submit, 'task' ),
+                'type' => 'button',
+                'id'  => 'submit',
+                'default' => '',
+            );
+
+            $end = array( 'type' => 'sectionend' );
+            $details = array(
+                $begin,
+                $tokens,
+                $btn,
+                $end,
+            );
+            ?>
+            <form method="post" action="">
+              <?php
+              echo o_admin_fields( $details );
+              ?>
+            </form>
+          </div>
         <?php
     }
 
@@ -94,6 +134,7 @@ class Task_Manager_Builder {
     public static function get_task_manager_matabox(){
       ?>
         <div class='block-form'>
+
             <?php
             $begin = array(
                 'type' => 'sectionbegin',
@@ -161,8 +202,8 @@ class Task_Manager_Builder {
                 $date,
                 $end,
             );
-            echo o_admin_fields( $details );
-            ?>
+            echo o_admin_fields( $details );   
+            ?>       
         </div>
         <?php
         return;
@@ -180,6 +221,15 @@ class Task_Manager_Builder {
 
         }
     }
+    //public static function save_option_task( $post_id ){
+    //    $meta_key = 'o-task-manager&page=settings_task';
+    //    $data_post   = wp_unslash( $_POST );
+    //    if ( isset( $data_post[ $meta_key ] ) && ! empty( $data_post[ $meta_key ] ) ) {
+            
+   //         //update_post_meta( $post_id, $meta_key, $data_post[ $meta_key ] );
+   //         update_option( 'access_token', $data_post );
+   //     }
+   // }
 }
 
     
