@@ -160,9 +160,9 @@ class Orion_Task_Manager {
 		$this->loader->add_action( 'admin_menu', 'Task_Manager_Builder', 'settings_my_custom_menu_page' );
 		$this->loader->add_action( 'init', 'Task_Manager_Builder', 'register_cpt_task_manager' );
 		$this->loader->add_action( 'add_meta_boxes', 'Task_Manager_Builder', 'get_task_manager_metabox' );
-		$this->loader->add_action('save_post_o-task-manager', 'Task_Manager_Builder', 'save_post_task', 10);
-		$this->loader->add_action('save_post_o-task-manager', 'Task_Manager_Builder', 'save_option_task', 10);
-
+		$this->loader->add_action('save_post_o_task_manager', 'Task_Manager_Builder', 'save_post_task', 10);
+		$this->loader->add_filter('manage_posts_columns', 'Task_Manager_Builder' , 'task_manager_colonne');
+		$this->loader->add_action('manage_posts_custom_column', 'Task_Manager_Builder', 'data_colonne');
 	}
 
 	/**

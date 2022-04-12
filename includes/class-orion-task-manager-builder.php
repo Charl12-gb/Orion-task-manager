@@ -3,7 +3,6 @@
 if ( !defined( 'WPINC' ) ) {
     die;
 }
-//1/1202081100733494:5c4a16a64bb0c830dcb9da09716ad6c1
 
 class Task_Manager_Builder {
 
@@ -42,7 +41,7 @@ class Task_Manager_Builder {
             'can_export' => true,
         );
 
-        register_post_type( 'o-task-manager', $args );
+        register_post_type( 'o_task_manager', $args );
     }
 
     /**
@@ -50,7 +49,7 @@ class Task_Manager_Builder {
     */
     public static function settings_my_custom_menu_page() {
         add_submenu_page(
-            'edit.php?post_type=o-task-manager',
+            'edit.php?post_type=o_task_manager',
             __( 'Settings Task Manager', 'task' ),
             __( 'Settings', 'task' ),
             'manage_options',
@@ -64,14 +63,21 @@ class Task_Manager_Builder {
     */
     public static function task_manager_settings_page() {
         $token = get_option('access_token'); 
-        if( $token != '' )
-            $submit = 'UPDATE';
-        else
-            $submit = 'SAVE';
         ?>
         <div class="wrap">
             <h1><?php _e( 'Settings Task Manager', 'task' ); ?></h1>
             <p><?php _e( 'Configure your ASANA task management', 'task' ); ?></p>
+        <?php
+            if( $token != '' ){
+                $submit = 'UPDATE';
+                $token = 'XXXX-XXXX-XXXX-XXX';
+                _e( 'ASANA ACTIVE', 'task' );
+            }
+            else{
+                $submit = 'SAVE';
+                _e( 'Activated ASANA <a href="https://app.asana.com/" target="_blank">https://app.asana.com/</a>', 'task' );
+            }
+        ?>
         </div>
         <div class='block-form'>
            <?php
@@ -104,9 +110,9 @@ class Task_Manager_Builder {
             );
             ?>
             <form method="post" action="">
-              <?php
-              echo o_admin_fields( $details );
-              ?>
+                <?php
+                echo o_admin_fields( $details );
+                ?>
             </form>
           </div>
         <?php
@@ -117,12 +123,12 @@ class Task_Manager_Builder {
      */
     public static function get_task_manager_metabox() {
 
-        $screens = array( 'o-task-manager' );
+        $screens = array( 'o_task_manager' );
 
         foreach ( $screens as $screen ) {
 
             add_meta_box(
-                    'o-task-manager-box',
+                    'o_task_manager_box',
                     __( 'Task Configuration', 'Orion_task_manager' ),
                     'Task_Manager_Builder::get_task_manager_matabox',
                     $screen
@@ -131,7 +137,38 @@ class Task_Manager_Builder {
 
     }
 
+    // Création des colonnnes personnalisées
+    public static function task_manager_colonne($columns) {
+        unset( $columns['date'] );
+        return array_merge($columns, 
+        array(
+            'assignee' => __('Assigne'),
+            'due_date' => __('Due date')
+
+        ));
+    }
+
+    // Affichage des données
+    public static function data_colonne($name) {
+        global $post;
+        switch ($name) {
+            case 'assignee':
+                $task = get_post_meta($post->ID, 'o_task_manager');
+                //var_dump($task);
+                _e(get_user_asana_name($task[0]['assigne']));
+            break;
+            case 'due_date':
+                $task = get_post_meta($post->ID, 'o_task_manager');
+               _e(date("d/m/Y à H:i", strtotime($task[0]['date'])));
+            break;
+            default: '';
+        }
+    }
+
+
     public static function get_task_manager_matabox(){
+        $user_asana = get_user_for_asana();
+        $tasks = array('' => 'Choise') + get_all_task();
       ?>
         <div class='block-form'>
 
@@ -143,52 +180,73 @@ class Task_Manager_Builder {
 
             $assigne = array(
                 'title' => __( 'Assigne', 'task' ),
-                'name' => 'o-task-manager[assigne]',
+                'name' => 'o_task_manager[assigne]',
                 'type' => 'select',
                 'desc' => __( 'Who to assign the task to?', 'task' ),
                 'default' => '',
-                'options' => array()
+                'options' => $user_asana
             );
 
             $project = array(
                 'title' => __( 'Projects', 'task' ),
-                'name' => 'o-task-manager[project]',
+                'name' => 'o_task_manager[project]',
                 'type' => 'select',
                 'desc' => __( 'Select the project to assign', 'task' ),
                 'default' => '',
-                'options' => array(
-                  
-                )
+                'options' => get_asana_projet()
             );
 
-            $subproject = array(
-                'title' => __( 'Subproject', 'task' ),
-                'name' => 'o-task-manager[subproject]',
+            $subtask = array(
+                'title' => __( 'SubTask', 'task' ),
+                'name' => 'o_task_manager[subproject]',
                 'type' => 'select',
                 'desc' => __( 'Select a subproject', 'task' ),
                 'default' => '',
-                'options' => array(
-                    
-                )
+                'options' => $tasks
             );
 
             $dependencies = array(
                 'title' => __( 'Dependencies', 'task' ),
-                'name' => 'o-task-manager[dependencies]',
+                'name' => 'o_task_manager[dependencies]',
                 'type' => 'select',
                 'desc' => __( 'Select dependencies', 'task' ),
                 'default' => '',
-                'options' => array(
-                    
-                )
+                'options' => $tasks
             );
 
             $date = array(
                 'title' => __( 'Due date', 'task' ),
-                'name' => 'o-task-manager[date]',
+                'name' => 'o_task_manager[date]',
                 'type' => 'datetime-local',
                 'desc' => __( 'Set due date', 'task' ),
                 'default' => '',
+            );
+
+            $assignecodage = array(
+                'title' => __( 'Assigne Codage', 'task' ),
+                'name' => 'o_task_manager[assignecodage]',
+                'type' => 'select',
+                'desc' => __( 'Who to assign the codage task to?', 'task' ),
+                'default' => '',
+                'options' => $user_asana
+            );
+
+            $assignesuivi = array(
+                'title' => __( 'Assigne Suivi', 'task' ),
+                'name' => 'o_task_manager[assignesuivi]',
+                'type' => 'select',
+                'desc' => __( 'Who to assign the suivi task to?', 'task' ),
+                'default' => '',
+                'options' => $user_asana
+            );
+
+            $assignetest = array(
+                'title' => __( 'Assigne Test', 'task' ),
+                'name' => 'o_task_manager[assignetest]',
+                'type' => 'select',
+                'desc' => __( 'Who to assign the test task to?', 'task' ),
+                'default' => '',
+                'options' => $user_asana
             );
 
 
@@ -197,8 +255,11 @@ class Task_Manager_Builder {
                 $begin,
                 $assigne,
                 $project,
-                $subproject,
+                $subtask,
                 $dependencies,
+                $assignecodage,
+                $assignesuivi,
+                $assignetest,
                 $date,
                 $end,
             );
@@ -213,7 +274,7 @@ class Task_Manager_Builder {
      * function register annonce
      */
     public static function save_post_task( $post_id ){
-        $meta_key = 'o-task-manager';
+        $meta_key = 'o_task_manager';
         $data_post   = wp_unslash( $_POST );
         if ( isset( $data_post[ $meta_key ] ) && ! empty( $data_post[ $meta_key ] ) ) {
             
@@ -221,15 +282,4 @@ class Task_Manager_Builder {
 
         }
     }
-    //public static function save_option_task( $post_id ){
-    //    $meta_key = 'o-task-manager&page=settings_task';
-    //    $data_post   = wp_unslash( $_POST );
-    //    if ( isset( $data_post[ $meta_key ] ) && ! empty( $data_post[ $meta_key ] ) ) {
-            
-   //         //update_post_meta( $post_id, $meta_key, $data_post[ $meta_key ] );
-   //         update_option( 'access_token', $data_post );
-   //     }
-   // }
 }
-
-    

@@ -29,4 +29,45 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	 $(document).ready(function () {
+	 	console.log('Le script JS a bien été chargé');
+		$(document).on('submit', '#create_new_task', function(e){
+		 	e.preventDefault();
+		 	console.log('Le clic sur le bouton a été pris en compte');
+		 	var title = $('#titre').val();
+		 	var assigne = $('#assigne').val();
+		 	var project = $('#project').val();
+		 	var subtask = $('#subtask').val();
+		 	var dependancies = $('#dependancies').val();
+		 	var codage = $('#codage').val();
+		 	var suivi = $('#suivi').val();
+		 	var test = $('#test').val();
+		 	var duedate = $('#duedate').val();
+		 	//console.log(task_manager.ajaxurl);
+		 	
+		 	$.ajax({
+		 		url: task_manager.ajaxurl,
+		 		type: "POST",
+		 		data:{
+		 			'action': 'create_new_task',
+		 			'title': title,
+		 			'assigne': assigne,
+		 			'project': project,
+		 			'subtask': subtask,
+		 			'dependancies': dependancies,
+		 			'codage': codage,
+		 			'suivi': suivi,
+		 			'test': test,
+		 			'duedate': duedate,
+		 		},
+		 		success:function(response){
+		 			//console.log("La requête est terminée !");
+		 			console.log(response);
+		 		},
+		 		error:function(errorThrown){
+		 			console.log(errorThrown);
+		 		}
+		 	});
+		});
+	 });
 })( jQuery );
