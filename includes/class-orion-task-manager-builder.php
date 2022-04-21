@@ -116,6 +116,8 @@ class Task_Manager_Builder {
             </form>
           </div>
         <?php
+        //print_r( get_users( array('role' => 'orion_emploi') ) );
+        get_json_calendar() ;
     }
 
     /**
